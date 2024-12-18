@@ -1,0 +1,6 @@
+<launch>
+
+  <node name="ros_tutorial_msg_publisher.cpp" pkg="practice" type="publisher" />
+  <node name="ros_tutorial_msg_subscriber.cpp" pkg="practice" type="subscriber" />
+
+</launch>

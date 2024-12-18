@@ -1,0 +1,43 @@
+<launch>
+  <arg name="caddybot"/>
+  
+  <arg name="x_pos" default="-0"/>
+  <arg name="y_pos" default="0"/>
+  <arg name="z_pos" default="0.2"/>
+  <arg name="r_ang" default="0"/>
+  <arg name="p_ang" default="0"/>
+  <arg name="y_ang" default="0"/>
+  <arg name="map_name" default="empty"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" default="$(find turtlebot3_gazebo)/worlds/walking_person.world"/>  
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+  
+ <!--
+  <node name="tf_broad" pkg="practice" type="tf_broad" />
+-->
+  
+  <!--<arg name="model" default="$(find caddybot_urdf)/urdf/caddyboturdf1.urdf"/>-->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find caddybot_urdf)/urdf/caddyboturdf.xacro" />
+ 
+  <node name="robot_state_publisher"
+        pkg="robot_state_publisher"
+        type="robot_state_publisher" />
+
+  <node name="joint_state_publisher"
+        pkg="joint_state_publisher"
+        type="joint_state_publisher" />
+       
+  <node name="MakePC"
+        pkg="practice"
+        type="RGintoPC.py" />
+
+
+
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"  args="-urdf -model caddybot -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -R $(arg r_ang) -P $(arg p_ang) -Y $(arg y_ang) -param robot_description" />
+</launch>

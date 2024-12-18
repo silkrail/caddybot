@@ -1,0 +1,29 @@
+<launch>
+    <!-- Map server -->
+    <arg name="map_file" default="$(find practice)/config/map/test_15.yaml"/>
+    <node pkg="map_server" name="map_server"  type="map_server" args="$(arg map_file)" />
+
+
+    <!-- publish /tf , URDF -->    
+    <!--<param name="robot_description" textfile="$(find robot_description)/urdf/AGV2.urdf" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    -->
+
+    <!-- Odom-IMU Extended Kalman Filter -->
+    <!-- EKF node -->
+    <!--<node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+        <rosparam command="load" file="$(find practice)/config/ekf_localization.yaml"/>
+        <remap from="odometry/filtered" to="odom"/>
+    </node>-->
+
+
+
+
+    <!--<include file="$(find practice)/launch/include/amcl.launch" />-->
+    
+    <!--<include file="$(find practice)/launch/include/move_base.launch" />-->
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_description)/rviz/navigation.rviz" />
+
+</launch>

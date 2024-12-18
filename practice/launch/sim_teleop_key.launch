@@ -1,0 +1,11 @@
+<launch>
+  <arg name="model" />
+  <param name="robot_description" textfile="$(find robot_description)/urdf/AGV3_1.urdf" />
+ <node pkg="practice" type="AGV_teleop_key.py" name="AGV_teleop_key" output="screen" />
+<!-- EKF node -->    
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+        <rosparam command="load" file="$(find practice)/config/ekf_localization.yaml"/>
+        <remap from="odometry/filtered" to="odom" />
+    </node>
+
+</launch>
