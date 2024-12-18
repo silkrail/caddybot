@@ -1,0 +1,11 @@
+<launch>
+    <!-- Run model_states_plotter.py -->
+    <node name="model_states_plotter" pkg="robot_ctrl" type="model_states_plotter.py" output="screen">
+        <param name="actor_name" value="walking_person"/>
+    </node>
+
+    <!-- Run model_location_plotter.py -->
+    <node name="model_location_plotter" pkg="robot_ctrl" type="model_location_plotter.py" output="screen"/>
+
+</launch>
+

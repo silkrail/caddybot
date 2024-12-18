@@ -1,0 +1,32 @@
+<launch>
+    <node
+        name="tf_world_odom"
+        pkg="tf"
+        type="static_transform_publisher"
+        args="0 0 0 0 0 0 world odom 40" />
+
+    <node
+        name="tf_footprint_base"
+        pkg="tf"
+        type="static_transform_publisher"
+        args="0 0 0 0 0 0 base_footprint base_link 40" />
+
+
+
+    <node
+        name="fake_joint_calibration"
+        pkg="rostopic"
+        type="rostopic"
+        args="pub /calibrated std_msgs/Bool true" />
+    <include file="$(find robot_ctrl)/src/launch/gazebo.launch" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+    <!-- RViz launch with RealSense camera visualization (already part of Caddybot) 
+    <arg name="gui" default="True" />
+    <param name="use_gui" value="$(arg gui)" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find caddybot_urdf)/rviz/caddybot_with_realsense.rviz" required="true" />
+    -->    
+</launch>
+
