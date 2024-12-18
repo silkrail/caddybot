@@ -1,0 +1,29 @@
+<launch>
+  <!-- Argument for model name (optional) -->
+  <arg name="model" default="burger" />
+
+  <!-- Use xacro to process the xacro file and set robot_description parameter -->
+  <param name="robot_description"
+         command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_burger.urdf.xacro" />
+
+  <!-- Use xacro to process the xacro file and set robot_description parameter -->
+  <param name="robot_description"
+         command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_burger.urdf.xacro"/>
+
+  <!-- Node for joint state publisher GUI -->
+  <node name="joint_state_publisher_gui"
+        pkg="joint_state_publisher_gui"
+        type="joint_state_publisher_gui" />
+
+  <!-- Node for robot state publisher -->
+  <node name="robot_state_publisher"
+        pkg="robot_state_publisher"
+        type="robot_state_publisher" />
+
+  <!-- Node to launch RViz with the specified configuration file -->
+  <node name="rviz"
+        pkg="rviz"
+        type="rviz"
+        args="-d $(find turtlebot3_description)/rviz/burger.rviz" />
+</launch>
+

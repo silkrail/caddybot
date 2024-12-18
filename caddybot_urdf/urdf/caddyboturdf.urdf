@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="caddyboturdf">
+  
+  <link name="base_footprint"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0.0 0.0 0.32" rpy="0 -0.06 0"/>
+  </joint>
+
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.13001 0.0030047 0.020182"
+        rpy="0 0 0" />
+      <mass
+        value="23.189" />
+      <inertia
+        ixx="0.1628"
+        ixy="3.4324E-05"
+        ixz="-0.0063706"
+        iyy="0.21523"
+        iyz="-5.4253E-05"
+        izz="0.22576" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="1 0.5 0.5" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="1 0.5 0.5" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <link
+    name="LeftF_Link">
+    <inertial>
+      <origin
+        xyz="3.5645E-09 2.0638E-08 0.02868"
+        rpy="0 0 0" />
+      <mass
+        value="3.1488" />
+      <inertia
+        ixx="0.036853"
+        ixy="-7.098E-10"
+        ixz="-9.4404E-10"
+        iyy="0.036853"
+        iyz="5.3754E-10"
+        izz="0.059899" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://caddybot_urdf/meshes/LeftF_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://caddybot_urdf/meshes/LeftF_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="LeftFlink"
+    type="continuous">
+    <origin
+      xyz="-0.1625 -0.47151 -0.15967"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="LeftF_Link" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="RightF_Link">
+    <inertial>
+      <origin
+        xyz="5.47624412483572E-09 -4.71908490409789E-09 -0.0286797314543985"
+        rpy="0 0 0" />
+      <mass
+        value="3.1488296265046" />
+      <inertia
+        ixx="0.036853305692685"
+        ixy="5.45140823185881E-10"
+        ixz="-1.69602894516381E-09"
+        iyy="0.0368533056763454"
+        iyz="-9.32672289049548E-10"
+        izz="0.0598990431182657" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://caddybot_urdf/meshes/RightF_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://caddybot_urdf/meshes/RightF_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RightFlink"
+    type="continuous">
+    <origin
+      xyz="-0.1625 0.47151 -0.15967"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="RightF_Link" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="LB_Link">
+    <inertial>
+      <origin
+        xyz="0 -1.38777878078145E-17 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.672889345058735" />
+      <inertia
+        ixx="0.00102415281934837"
+        ixy="-9.64236297623981E-50"
+        ixz="9.32002799941477E-19"
+        iyy="0.00102415281934837"
+        iyz="-3.93279156307764E-35"
+        izz="0.00188210863417053" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://caddybot_urdf/meshes/LB_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://caddybot_urdf/meshes/LB_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="LBlink"
+    type="continuous">
+    <origin
+      xyz="0.748 -0.35316 -0.299"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="LB_Link" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="RB_Link">
+    <inertial>
+      <origin
+        xyz="0 -1.38777878078145E-17 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.672889345058735" />
+      <inertia
+        ixx="0.00102415281934837"
+        ixy="1.70075227112675E-20"
+        ixz="-1.96517608339373E-18"
+        iyy="0.00102415281934837"
+        iyz="-5.32937046757169E-21"
+        izz="0.00188210863417053" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://caddybot_urdf/meshes/RB_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://caddybot_urdf/meshes/RB_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RBlink"
+    type="continuous">
+    <origin
+      xyz="0.753 0.35 -0.299"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="RB_Link" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+
+
+<!--         gazebo plugin  -->     
+  <gazebo reference="base_link">
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>500000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.22</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/Grey</material>
+  </gazebo>
+  
+  <gazebo reference="LeftF_Link">
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>500000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.22</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/Blue</material>
+  </gazebo>
+  
+  <gazebo reference="RightF_Link">
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>500000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.22</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/Blue</material>
+  </gazebo>
+  
+  <gazebo reference="LB_Link">
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>500000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.22</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/Red</material>
+  </gazebo>
+  
+  <gazebo reference="RB_Link">
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>500000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.22</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/Red</material>
+  </gazebo>
+  
+<gazebo>
+  <plugin name="caddy_controller" filename="libgazebo_ros_diff_drive.so">
+    <updateRate>40</updateRate>
+    <leftJoint>LeftF_Link</leftJoint>
+    <rightJoint>RightF_Link</rightJoint>
+    <wheelSeparation>1</wheelSeparation>
+    <wheelDiameter>0.310</wheelDiameter>
+    <wheelAcceleration>1.0</wheelAcceleration>
+    <wheelTorque>20</wheelTorque>
+    <commandTopic>cmd_vel</commandTopic>
+    <odometryTopic>odom</odometryTopic>
+    <odometryFrame>odom</odometryFrame>
+    <robotBaseFrame>base_footprint</robotBaseFrame>
+    <odometrySource>1</odometrySource>
+    <publishWheelTF>false</publishWheelTF>
+    <publishOdom>true</publishOdom>
+    <publishWheelJointState>true</publishWheelJointState>
+    <legacyMode>false</legacyMode>
+  </plugin>
+</gazebo>
+</robot>
+
+
