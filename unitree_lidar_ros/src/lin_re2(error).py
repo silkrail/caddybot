@@ -68,17 +68,17 @@ class SlopeEstimator:
         rotation_matrix = quaternion_matrix(current_orientation_list)[:3, :3]  # 상위 3x3 회전 행렬만 사용
         
         # 위치 변화량 벡터 (delta_x, delta_y, delta_z) 생성
-        translation_vector = np.array([current_position.x, current_position.y, current_position.z])
+        translation_vector = np.array([current_position.x, current_position.y , current_position.z])
         routes = []
-        current_normal = np.dot(rotation_matrix[:3, :3], [0,0,1])
         # 각 관심 지점에 대해 평행 이동 및 회전 적용
+        init_centroid = [self.current_odom.pose.pose.position.x,self.current_odom.pose.pose.position.y,self.current_odom.pose.pose.position.z]
         for i, interest_point in enumerate(interest_points):
             
             # 포인트 회전 보정
             rotated_interest_point = np.dot(rotation_matrix, interest_point)
             # 관심 지점에 대한 평행 이동
             moved_point = rotated_interest_point + translation_vector
-
+    
             # 각 관심 지점에 대해 탐지반지름 내의 포인트를 수집 (z 좌표 무시)
             points = []
             for point in pc2.read_points(self.current_pointcloud, skip_nans=True):
@@ -98,9 +98,11 @@ class SlopeEstimator:
             if normal_vector is not None and centroid is not None:
                 routes.append([i + 1, centroid, normal_vector])
                 self.publish_marker(centroid, normal_vector, self.marker_pub, i)
-        routes.append([22, [current_position.x, current_position.y, current_position.z], [0, 0, 1]]) #로봇의 현재 포지션을 22번째 리스트로 추가
-        
+        routes.append([22,init_centroid,[0,0,1]])
+
         routes_msg = Routes()
+        routes_msg.header.stamp = rospy.Time.now()  
+        routes_msg.header.frame_id = "odom"  
         for idx, route in enumerate(routes):
             route_msg = Route()
             route_msg.index = route[0]
@@ -118,7 +120,10 @@ class SlopeEstimator:
             routes_msg.routes.append(route_msg)  # 경로를 Routes 메시지에 추가
 
         self.routes_pub.publish(routes_msg) 
-
+        self.evaluate_route(routes)
+        #rospy.loginfo('time')
+        
+    def evaluate_route(self, routes):
         total_z_difference = 0.0  # Z 차이의 합
         cos_vector_n = 0.0         # 각도의 코사인 값
         cos_limit = math.cos(math.radians(45)) # 각도변화의 한계값
@@ -159,63 +164,60 @@ class SlopeEstimator:
             
             if len(route_list) == 3:
                 len_ways.append(len(route_list))
-                ang_diff=0
-                ang_diff_norm=0
-                for i in range(3):
-                    if i == 0:
-                        z_diff = route_list[0][1][2] - current_position.z
-                        route_vector = route_list[i][1] - np.array([current_position.x, current_position.y, current_position.z])                       
-                        projected_vector1 = self.project_onto_plane(route_list[i][2], route_vector)
-                        projected_vector2 = self.project_onto_plane(current_normal, route_vector)
-
-                    else:
-                        z_diff = route_list[i][1][2] - route_list[i-1][1][2]
-                        route_vector = route_list[i][1] - route_list[i-1][1]
-                        projected_vector1 = self.project_onto_plane(route_list[i][2], route_vector)
-                        projected_vector2 = self.project_onto_plane(route_list[i - 1][2], route_vector)
-                    
-                    size_vector_norm = np.linalg.norm(route_vector)
-                    if z_diff >=0.25:
-                        data['score'] = 1000
-                    data['score'] +=self.a*abs(math.atan(z_diff / size_vector_norm)) # 제 1요인 지면의 높이변화
-                    
-                        
-                    projected_vector1_norm = self.project_onto_plane([0,0,1], route_vector)
-                    projected_vector2_norm = self.project_onto_plane(route_list[i][2], route_vector)
-                    
-                    dot_vector = np.dot(projected_vector1, projected_vector2)
-                    size_vector = np.linalg.norm(dot_vector)
+                z_differences = []
+                for i in range(len(route_list)-1):
+                    z_diff = route_list[i + 1][1][2] - route_list[i][1][2]
+                    z_differences.append(z_diff)
+                first_z_diff = abs(route_list[0][1][2] - self.current_odom.pose.pose.position.z)
+                total_z_difference = first_z_diff + sum(z_differences)
+                data['score'] += self.a * total_z_difference      # 제 1요인 지면의 높이 변화
+                
+                normal_sum = np.array([0, 0, 0]) 
+                ang_difference = []
+                for i in range(len(route_list) - 1):
+                    normal_sum = normal_sum + route_list[i][2]
+                    dot_vector = np.dot(route_list[i][2], route_list[i + 1][2])
+                    size_vector = np.linalg.norm(route_list[i][2]) * np.linalg.norm(route_list[i + 1][2])
                     cos_vector = dot_vector / size_vector
-                    ang_diff = math.acos(cos_vector)
-                    if ang_diff >=math.pi/4:
-                        data['score'] = 1000
+                    if cos_vector < cos_limit:
+                        data['score'] = 100
                         data['obstacle'] = 1
+                    else:
+                        data['score'] += self.b * 1/cos_vector    # 제 2요인 지면의 기울기 변화
                         
-                    cross_vector_norm = np.cross(projected_vector1_norm, projected_vector2_norm)
-                    dot_vector_norm = np.dot(cross_vector_norm, route_vector)
-                    
-                    sin_vector_norm = dot_vector_norm / size_vector_norm
-                    ang_diff_norm = math.asin(sin_vector_norm)
-                    if ang_diff_norm >=math.pi/4:
-                        data['score'] = 1000
-                        data['obstacle'] = 1
-
-                    data['score'] +=self.b * abs(ang_diff)   # 제 2요인 지면의 roll변화    
-                    data['score'] +=self.c * abs(ang_diff_norm)   # 제 3요인 지면의 전반적인 roll  
-            else:
+                normal_sum = normal_sum / len(route_list)
+                dot_vector_n = np.dot(normal_sum, [0, 0, 1])
+                size_vector_n = np.linalg.norm(normal_sum) * np.linalg.norm([0, 0, 1])
+                cos_vector_n = dot_vector_n / size_vector_n
+                if cos_vector_n < cos_limit:
+                    data['score'] = 100
+                    data['obstacle'] = 1
+                else:
+                    data['score'] += self.c * 1/cos_vector_n   # 제 3요인 지면의 전반적인 기울기                                    
+            elif len(route_list) == 2:
                 len_ways.append(len(route_list))
-                data['score'] = 1000
+                data['score'] = 100
                 data['obstacle'] = 1
-
+                rospy.loginfo('lack of useable points')
+            elif len(route_list) == 1:
+                len_ways.append(len(route_list))
+                data['score'] = 100
+                data['obstacle'] = 1
+                rospy.loginfo('lack of useable points') 
+            elif len(route_list) == 0:
+                len_ways.append(len(route_list))
+                data['score'] = 100
+                data['obstacle'] = 1
+                rospy.loginfo('No useable point')
 
         for i in range(7):
             key = f'way{i+1}' 
             if classified_routes[key]['obstacle'] == 1:
                 print('obstacle detected')
                 if i != 0:
-                    classified_routes[f'way{i}']['score'] =1000
+                    classified_routes[f'way{i}']['score'] =100
                 if i !=6:
-                    classified_routes[f'way{i+2}']['score'] =1000
+                    classified_routes[f'way{i+2}']['score'] =100
                     
         for i in range(7):
             key = f'way{i+1}'             
@@ -235,20 +237,8 @@ class SlopeEstimator:
         len_pub = rospy.Publisher('/len_way', LenWay, queue_size=10)
         len_pub.publish(len_way_msg)
         return classified_routes
-       
-    def project_onto_plane(self, vector, normal_vector):
-        # 법선 벡터의 크기 계산
-        normal_magnitude = np.linalg.norm(normal_vector)
-        if normal_magnitude == 0:
-            raise ValueError("Normal vector cannot be zero.")
-    
-        # 단위 법선 벡터 계산
-        unit_normal = normal_vector / normal_magnitude
-    
-        # 벡터를 평면에 사영
-        projection = vector - np.dot(vector, unit_normal) * unit_normal
-    
-        return projection              
+        
+            
     def calculate_slope(self, points, interest_point):
         if points.shape[0] < 10:
             #rospy.loginfo(f"Not enough points to estimate a plane at {interest_point}.")

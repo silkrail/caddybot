@@ -1,8 +1,8 @@
 <launch>
 
-  <node pkg="unitree_lidar_ros" type="unitree_lidar_ros_node"  name="unitree_lidar_ros_node" respawn="true">
+    <node pkg="unitree_lidar_ros" type="unitree_lidar_ros_node"  name="unitree_lidar_ros_node" respawn="true">
     <rosparam command="load" file="$(find unitree_lidar_ros)/config/config.yaml"/>
-  </node>
+    </node>
     <node pkg="unitree_lidar_ros" type="newbuffer_fin.py" name="newbuffer_fin"/>
-    <node pkg="unitree_lidar_ros" type="lin_re3.py" name="lin_re2"/>
+    <node pkg="unitree_lidar_ros" type="lin_re2.py" name="lin_re2"/>    
 </launch>

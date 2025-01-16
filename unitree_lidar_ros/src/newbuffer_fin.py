@@ -15,7 +15,7 @@ class PointCloudDataCollector:
         rospy.init_node('lidar_data_collector', anonymous=True)
 
         # PointCloud와 Odometry 메시지 필터로 동기화
-        lidar_sub = message_filters.Subscriber('unilidar/cloud', PointCloud2)
+        lidar_sub = message_filters.Subscriber('/lidar_pointcloud', PointCloud2)
         odom_sub = message_filters.Subscriber('odom', Odometry)
 
         # ApproximateTimeSynchronizer로 메시지 동기화
@@ -53,8 +53,8 @@ class PointCloudDataCollector:
         for pointcloud_msg, odom_msg in list(self.data_buffer):  # 버퍼 복사본 사용
             points = []
             for point in pc2.read_points(pointcloud_msg, field_names=("x", "y", "z"), skip_nans=True):
-                if -1 <= point[0] <= 1 and -3 <= point[1] <= 3 and point[2] <= 3:
-                #if 0 <= point[0] <= 3 and -3 <= point[1] <= 3 and point[2] <= 1:
+                #if -1 <= point[0] <= 1 and -3 <= point[1] <= 3 and point[2] <= 3:
+                if 0 <= point[0] <= 3 and -3 <= point[1] <= 3 and point[2] <= 1:
                     points.append([point[0], point[1], point[2]])
 
             if not points:
@@ -84,8 +84,8 @@ class PointCloudDataCollector:
         transformed_points = []
         for point in points:
             # 포인트를 로봇의 위치와 회전에 따라 변환
-            #point_robot = np.array([point[0] , point[1],point[2]])
-            point_robot = np.array([point[2] + 0.36, point[1], 0.45 - point[0]])
+            point_robot = np.array([point[0] , point[1],point[2]])
+            #point_robot = np.array([point[2] + 0.36, point[1], 0.45 - point[0]])
             point_world = np.dot(rotation_matrix, point_robot) + np.array([position.x, position.y, position.z])
             transformed_points.append(point_world)
 
